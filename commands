@@ -63,7 +63,7 @@ DEF_CMD(add,   10, ZERO_OPERAND,
 		double A = 0, B = 0;
 		POP(A);
 		POP(B);
-		PUSH(A - B);
+		PUSH(A + B);
 	})
 
 DEF_CMD(in,    11, ZERO_OPERAND,
