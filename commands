@@ -1,1 +1,79 @@
+DEF_CMD(push,   1, ONE_OPERAND,
+	{
+		if (MODE == NUMBER)
+		{	
+			PUSH(CODE[IP + 1]);
+		}
+		else if (MODE == REGISTR)
+		{
+			PUSH(REGISTER[CODE[IP + 1]]);
+		}
+	})
 
+DEF_CMD(pop,    3, ONE_OPERAND,
+	{
+		if (MODE == NUMBER || MODE == REGISTR)
+		{
+			double A = 0;
+			POP(A);
+			REGISTER[CODE[IP + 1]] = A;
+		}
+	})
+
+DEF_CMD(out,    5, ZERO_OPERAND,
+	{
+		double A = 0;
+		POP(A);
+		printf("%lf", A);
+	})
+
+DEF_CMD(mul,    6, ZERO_OPERAND,
+	{
+		double A = 0, B = 0;
+		POP(A);
+		POP(B);
+		PUSH(A * B);
+	})
+
+DEF_CMD(sub,    7, ZERO_OPERAND,
+	{
+		double A = 0, B = 0;
+		POP(A);
+		POP(B);
+		PUSH(B - A);
+	})
+
+DEF_CMD(div,    8, ZERO_OPERAND,
+	{
+		double A = 0, B = 0;
+		POP(A);
+		POP(B);
+		PUSH(B / A);
+	})
+
+DEF_CMD(sqrt,   9, ZERO_OPERAND,
+	{
+		double A = 0;
+		POP(A);
+		PUSH(sqrt(A));
+	})
+	
+DEF_CMD(add,   10, ZERO_OPERAND,
+	{
+		double A = 0, B = 0;
+		POP(A);
+		POP(B);
+		PUSH(A - B);
+	})
+
+DEF_CMD(in,    11, ZERO_OPERAND,
+	{
+		double A = 0;
+		scanf_s("%lf", &A);
+		PUSH(A);
+	})
+
+DEF_CMD(hlt,   0, ZERO_OPERAND,
+	{
+		goto out;
+	})
