@@ -28,51 +28,51 @@ int main()
 	return 0;
 }
 
-#define IF(name, registr)																													    \
-		if (_stricmp(nameReg, #registr) == 0)																								     \
-		{																																	      \
-			code[ip++] = CMD_##name | REGISTR;																									   \
-			code[ip++] = registr##_index;																										    \
-			fprintf(listing_ass, "%08d \t %08X \t %08X \t %4s \t %s\n", i, CMD_##name | REGISTR, registr##_index, nameCommand, nameReg);			 \
+#define IF(name, registr)															      \
+		if (_stricmp(nameReg, #registr) == 0)												       \
+		{																        \
+			code[ip++] = CMD_##name | REGISTR;												 \
+			code[ip++] = registr##_index;													  \
+			fprintf(listing_ass, "%08d \t %08X \t %08X \t %4s \t %s\n", i, CMD_##name | REGISTR, registr##_index, nameCommand, nameReg);	   \
 		}																																		      
 
 
 
 
-#define DEF_CMD(name, num, args, ...)																					 \
-		if (_stricmp(nameCommand, #name) == 0)																			  \
-		{																												   \
-			CHECK_SYNTAX(args);																								\
-			if (args == 0)																									 \
-			{																												  \
-				code[ip++] = CMD_##name;																					   \
-				fprintf(listing_ass, "%08d \t %08X \t\t\t\t %s\n", i, CMD_##name, nameCommand);									\
-			}																													 \
-			if (args == 1)																										  \
-			{																													   \
-				if (AnalysSyntax(buffer[i]) == NUMBER)																				\
-				{																													 \
-					int operand = 0;																								  \
-					sscanf_s(buffer[i], "%*s %d", &operand);									 									   \
-					code[ip++] = CMD_##name | NUMBER;																				    \
-					code[ip++] = operand;																								 \
-					fprintf(listing_ass, "%08d \t %08X \t %08X \t %4s \t %d\n", i, CMD_##name | NUMBER, operand, nameCommand, operand);   \
-				}																						   \
-				if (AnalysSyntax(buffer[i]) == REGISTR)														\
-				{																							 \
-					char nameReg[4] = "";																	  \
-					sscanf_s(buffer[i], "%*s %3s", nameReg, (unsigned)_countof(nameReg));					   \
-					IF(name, rax)																				\
-					else IF(name, rbx) 																			 \
-					else IF(name, rcx)																			  \
-					else IF(name, rdx)																			   \
-					else																							\
-					{																								 \
-						printf("Syntax error. Unknown oprerator %s in command push in line %d\n", nameReg, i + 1);    \
-					}																								   \
-				}																									    \
-			}																							                 \
-			i++;																										  \
+#define DEF_CMD(name, num, args, ...)																 \
+		if (_stricmp(nameCommand, #name) == 0)														  \
+		{																		   \
+			CHECK_SYNTAX(args);															    \
+			if (args == 0)																     \
+			{																	      \
+				code[ip++] = CMD_##name;													       \
+				fprintf(listing_ass, "%08d \t %08X \t\t\t\t %s\n", i, CMD_##name, nameCommand);							        \
+			}																		 \
+			if (args == 1)																	  \
+			{																		   \
+				if (AnalysSyntax(buffer[i]) == NUMBER)													    \
+				{																	     \
+					int operand = 0;														      \
+					sscanf_s(buffer[i], "%*s %d", &operand);									 		       \
+					code[ip++] = CMD_##name | NUMBER;													\
+					code[ip++] = operand;															 \
+					fprintf(listing_ass, "%08d \t %08X \t %08X \t %4s \t %d\n", i, CMD_##name | NUMBER, operand, nameCommand, operand);                       \
+				}																		   \
+				if (AnalysSyntax(buffer[i]) == REGISTR)														    \
+				{																		     \
+					char nameReg[4] = "";														  	      \
+					sscanf_s(buffer[i], "%*s %3s", nameReg, (unsigned)_countof(nameReg));					                                       \
+					IF(name, rax)																	\
+					else IF(name, rbx) 																 \
+					else IF(name, rcx)																  \
+					else IF(name, rdx)																   \
+					else																		    \
+					{																		     \
+						printf("Syntax error. Unknown oprerator %s in command push in line %d\n", nameReg, i + 1);   						      \
+					}																		       \
+				}																				\
+			}																					 \
+			i++;																					  \
 		} else
 
 
