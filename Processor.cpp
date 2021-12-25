@@ -1,24 +1,46 @@
-﻿#include "Processor.h"
+//#define DEBUG
+#include "Processor.h"
 
 int main()
 {
 	FILE* command = nullptr;
-	OpenFile(&command, "machine_code.bin", "rb");
+	OpenFile(&command, "..\\..\\machine_code.bin", "rb");
+	
+	FUCK
 
 	long long BufferSize = 0;
 	fread(&BufferSize, 1, sizeof(int), command);
 	rewind(command);
 
+	FUCK
+
 	CPU processor = {};
 
 	InitCPU(processor, BufferSize);
 
+	FUCK
+
 	fread(processor.code, BufferSize, sizeof(*processor.code), command);
+
+	FUCK
 
 	Execute(processor);
 
+	ClearCPU(processor);
+
 	fclose(command);
 }
+
+
+#define DEF_CMD(name, num, arg, ...)   			\
+	case CMD_##name:				 \
+	{						  \
+		__VA_ARGS__				   \
+		processor.ip += (arg + 1);		    \
+		break;				  	     \
+	}			
+
+
 
 
 void Execute(CPU& processor)
@@ -26,106 +48,48 @@ void Execute(CPU& processor)
 	processor.ip = 1;
 	while (processor.ip < processor.code_capacity)
 	{
-		switch (processor.code[processor.ip])
+		int default_cmd = processor.code[processor.ip] & ~NUMBER & ~REGISTR;
+		switch (default_cmd)
 		{
-		case CMD_push:
-		{
-			StackPush(&processor.stack, processor.code[++processor.ip]);
-			processor.ip++;
-			break;
-		}
-		case CMD_rpush:
-		{
-			StackPush(&processor.stack, processor.registr[processor.code[++processor.ip]]);
-			processor.ip++;
-			break;
-		}
-		case CMD_pop:
-		{
-			element var = 0;
-			StackPop(&processor.stack, &var);
-			processor.ip++;
-			break;
-		}
-		case CMD_rpop:
-		{
-			element variable = 0;
-			StackPop(&processor.stack, &variable);
-			processor.registr[processor.code[++processor.ip]] = variable;
-			processor.ip++;
-			break;
-		}
-		case CMD_add:
-		{
-			element a = 0, b = 0;
-			StackPop(&processor.stack, &a);
-			StackPop(&processor.stack, &b);
-			StackPush(&processor.stack, a + b);
-			processor.ip++;
-			break;
-		}
-		case CMD_div:
-		{
-			element a = 0, b = 0;
-			StackPop(&processor.stack, &a);
-			StackPop(&processor.stack, &b);
-			StackPush(&processor.stack, b / a);
-			processor.ip++;
-			break;
-		}
-		case CMD_in:
-		{
-			element variable = 0;
-			fscanf_s(stdin, EL, &variable);
-			StackPush(&processor.stack, variable);
-			processor.ip++;
-			break;
-		}
-		case CMD_mul:
-		{
-			element a = 0, b = 0;
-			StackPop(&processor.stack, &a);
-			StackPop(&processor.stack, &b);
-			StackPush(&processor.stack, a * b);
-			processor.ip++;
-			break;
-		}
-		case CMD_out:
-		{
-			element variable;
-			StackPop(&processor.stack, &variable);
-			printf(EL, variable);
-			processor.ip++;
-			break;
-		}
-		case CMD_sqrt:
-		{
-			element variable;
-			StackPop(&processor.stack, &variable);
-			StackPush(&processor.stack, (element)sqrtl(variable));
-			processor.ip++;
-			break;
-		}
-		case CMD_sub:
-		{
-			element a = 0, b = 0;
-			StackPop(&processor.stack, &a);
-			StackPop(&processor.stack, &b);
-			StackPush(&processor.stack, b - a);
-			processor.ip++;
-			break;
-		}
-		case CMD_hlt:
-		{
-			goto out;
-		}
-		default:
-		{
-			printf("An unknown command with code %d was detected.Recompile the input file", processor.code[processor.ip]);
-			exit(EXIT_FAILURE);
-			break;
-		}
+			#include "../../commands"
+			default: printf("Error: Uncnown CMD %d", default_cmd);
 		}
 	}
-	out:{;}
+	out:;
+}
+
+#undef DEF_CMD
+
+
+void InitCPU(CPU& processor, size_t start_capacity)
+{
+	processor.code = (int*)calloc(start_capacity, sizeof(int));
+	processor.ip = 0;
+	processor.code_capacity = start_capacity;
+	StackCtor(&processor.stack, 20);
+	for (int i = 0; i < 4; i++)
+	{
+		processor.registr[i] = 0;
+	}
+
+	if (processor.code == nullptr)
+	{
+		puts("Error. Not enough free memory");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void ClearCPU(CPU& processor)
+{
+	free(processor.code);
+	StackDtor(&processor.stack);
+}
+
+
+int AnalysMode(int cmd)
+{
+	if ((cmd | NUMBER) == cmd)
+		return NUMBER;
+	else if ((cmd | REGISTR) == cmd)
+		return REGISTR;
 }
