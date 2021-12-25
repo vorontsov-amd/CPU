@@ -1,10 +1,32 @@
-DEF_CMD(push,   1, ONE_OPERAND)
-DEF_CMD(pop,    3, ONE_OPERAND)
-DEF_CMD(out,    5, ZERO_OPERAND)
-DEF_CMD(mul,    6, ZERO_OPERAND)
-DEF_CMD(sub,    7, ZERO_OPERAND)
-DEF_CMD(div,    8, ZERO_OPERAND)
-DEF_CMD(sqrt,   9, ZERO_OPERAND)
-DEF_CMD(add,   10, ZERO_OPERAND)
-DEF_CMD(in,    11, ZERO_OPERAND)
-DEF_CMD(hlt,   -1, ZERO_OPERAND)
+#pragma once
+
+enum NumOperand
+{
+	ZERO_OPERAND = 0,
+	ONE_OPERAND = 1,
+};
+
+enum CommandMode
+{
+	NUMBER = 0x80000000,
+	REGISTR = 0x40000000,
+};
+
+enum RegistIndex
+{
+	rax_index,
+	rbx_index,
+	rcx_index,
+	rdx_index,
+};
+
+
+#define DEF_CMD(name, num, ...)       \
+	CMD_##name = num,				             \
+
+enum CMD
+{
+	#include "commands"
+};
+
+#undef DEF_CMD
