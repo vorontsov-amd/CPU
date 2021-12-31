@@ -22,7 +22,11 @@ enum RegistIndex
 
 
 #define DEF_CMD(name, num, ...)       \
-	CMD_##name = num,	       \
+	CMD_##name = num,		
+
+
+#define DEF_JMP(name, num, ...)		   \
+	CMD_##name = num,
 
 enum CMD
 {
@@ -30,3 +34,4 @@ enum CMD
 };
 
 #undef DEF_CMD
+#undef DEF_JMP
