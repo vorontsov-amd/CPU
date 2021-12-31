@@ -32,14 +32,44 @@ int main()
 }
 
 
-#define DEF_CMD(name, num, arg, ...)   			\
-	case CMD_##name:				 \
-	{						  \
-		__VA_ARGS__				   \
-		processor.ip += (arg + 1);		    \
-		break;				  	     \
+#define DEF_CMD(name, num, arg, ...)         \
+	case CMD_##name:		      \
+	{				       \
+		__VA_ARGS__			\
+		processor.ip += (arg + 1);       \
+		break;				  \
 	}			
 
+#define DEF_JMP(name, num, sign)					    \
+	case CMD_##name:						     \
+	{								      \
+		switch (num) 						       \
+		{							        \
+			case CMD_call:					         \
+			{							  \
+				StackPush(&processor.callStk, (processor.ip + 1)); \
+				processor.ip = processor.code[processor.ip + 1];    \
+				break;						     \
+			}							      \
+			case CMD_jmp:						       \
+			{								\
+				processor.ip = processor.code[processor.ip + 1];         \
+				break;							  \
+			}								   \
+			default:							    \
+			{								     \
+				double A = 0, B = 0;					      \
+				StackPop(&processor.stack, &B);				       \
+				StackPop(&processor.stack, &A);					\
+				if (B ##sign## A)						 \
+				{								  \
+					processor.ip = processor.code[processor.ip + 1];	   \
+				}								    \
+				break;								     \
+			}									      \
+		}								 		       \
+		break;											\
+	}										   
 
 
 
@@ -67,6 +97,7 @@ void InitCPU(CPU& processor, size_t start_capacity)
 	processor.ip = 0;
 	processor.code_capacity = start_capacity;
 	StackCtor(&processor.stack, 20);
+	StackCtor(&processor.callStk, 20);
 	for (int i = 0; i < 4; i++)
 	{
 		processor.registr[i] = 0;
@@ -83,6 +114,7 @@ void ClearCPU(CPU& processor)
 {
 	free(processor.code);
 	StackDtor(&processor.stack);
+	StackDtor(&processor.callStk);
 }
 
 
