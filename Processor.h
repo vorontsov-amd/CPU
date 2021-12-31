@@ -6,6 +6,7 @@
 struct CPU
 {
 	Stack stack;
+	Stack callStk;
 	double registr[4];
 	int ip;
 	int* code;
