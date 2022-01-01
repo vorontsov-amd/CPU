@@ -17,6 +17,7 @@ int main()
 
 	fclose(input);
 	fclose(output);
+	delete[] code
 	return 0;
 }
 
