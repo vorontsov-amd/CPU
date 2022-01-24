@@ -3,7 +3,7 @@
 #include "..\..\enum.h"
 
 
-const int MAX_LEN_CMD = 5;
+const int MAX_LEN_CMD = 10;
 const int MIN_BUF_SIZE = 50;
 
 enum LabelStatus
@@ -43,11 +43,15 @@ inline bool IsMark(const char str[]);
 void AddLabel(const char str[], Label& label, const int index);
 label_t FindLabel(char str[], Label& label);
 inline bool LabelNotCreated(label_t label);
+void LabelDtor(Label* label);
+bool OperandIsNumber(char line[]);
+int GetOperandNumber(char line[]);
+char* GetOperandRegister(char line[]);
 
-#define CHECK_SYNTAX(CountOfOperand)	{			\
-	if (SyntaxError(buffer[i], CountOfOperand))		 \
-	{							  \
-		printf("Syntax Error in line %d\n", i + 1);	   \
-		exit(EXIT_FAILURE);				    \
-	}							     \
+#define CHECK_SYNTAX(CountOfOperand)	{								   \
+	if (SyntaxError(buffer[i], CountOfOperand))							    \
+	{												     \
+		printf("Syntax Error in line %d\n", i + 1);						      \
+		exit(EXIT_FAILURE);									       \
+	}													\
 }
