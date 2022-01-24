@@ -10,6 +10,7 @@ enum CommandMode
 {
 	NUMBER = 0x80000000,
 	REGISTR = 0x40000000,
+	VRAM = 0x20000000,
 };
 
 enum RegistIndex
@@ -25,7 +26,7 @@ enum RegistIndex
 	CMD_##name = num,		
 
 
-#define DEF_JMP(name, num, ...)		   \
+#define DEF_JMP(name, num, ...)			   \
 	CMD_##name = num,
 
 enum CMD
