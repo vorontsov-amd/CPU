@@ -128,8 +128,8 @@ int main()
 		code[ip++] = CMD_##name;												\
 		code[ip++] = getLabel.pointer;												 \
 		fprintf(listing_ass, "%08d \t %08X \t %08X \t %4s \t %s\n", i, CMD_##name, getLabel.pointer, nameCommand, getLabel.mark); \
-		i++;																													   \
-	}																																\
+		i++;															   \
+	}																    \
 	else
 
 void Translate(FILE* input, int* code)
